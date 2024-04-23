@@ -2,6 +2,7 @@
 
 import AccommodationCard from '@/components/AccommodationCard';
 import DateRangePicker from '@/components/DateRangePicker';
+import MenuComponent, { MenuOptions } from '@/components/Menu';
 import CustomModal from '@/components/Modal';
 import { useAccommodationStore, useBookingStore } from '@/store';
 import { Booking } from '@/store/Booking';
@@ -65,21 +66,8 @@ function MyReservations() {
     userReservations.length >= 4 ? 'max-w-[1920px]' : 'max-w-[1720px]';
 
   return (
-    <main>
-      <div className="bg-gray-300 py-4 mb-8 shadow-lg text-white">
-        <div className="container mx-auto flex justify-center">
-          <Link href={`/`}>
-            <Typography className="px-4 cursor-pointer text-black hover:text-gray-700">
-              Home
-            </Typography>
-          </Link>
-          <Link href={`/my-reservations`}>
-            <Typography className="px-4 cursor-pointer text-blue-600 hover:text-blue-500">
-              My reservations
-            </Typography>
-          </Link>
-        </div>
-      </div>
+    <main className="flex flex-col justify-center">
+      <MenuComponent active={MenuOptions['/my-reservations']} />
       <div
         className={`${maxWidth} mx-auto grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-24 gap-4 px-24`}
       >
@@ -101,7 +89,7 @@ function MyReservations() {
         <CustomModal
           isOpen={isModalOpen}
           onClose={handleModalClose}
-          rightButtonLabel="Update"
+          rightButtonLabel="Edit"
           isRightActionDisabled={!selectedReservation}
           onRightButtonAction={handleUpdate}
           leftButtonLabel="Cancel reservation"

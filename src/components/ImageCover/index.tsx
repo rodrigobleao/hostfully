@@ -24,6 +24,7 @@ const ImageCover: React.FC<ImageCoverProps> = ({ alt, src, minHeight }) => {
             style={{ objectFit: 'cover' }}
             draggable={false}
             sizes="50vw"
+            priority
           />
         </div>
       </div>

@@ -16,7 +16,7 @@ const CustomButton: React.FC<CustomButtonProps> = ({
   ...buttonProps
 }) => {
   let buttonStyle =
-    'text-white rounded bg-blue-600 hover:bg-blue-400 normal-case transition-colors duration-300 p-2';
+    'text-white disabled:text-white rounded bg-blue-600 hover:bg-blue-400 normal-case transition-colors duration-300 p-2';
 
   switch (styleVariant) {
     case 'secondary':
