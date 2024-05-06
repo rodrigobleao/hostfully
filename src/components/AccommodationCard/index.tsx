@@ -1,9 +1,8 @@
 import { Typography } from '@mui/material';
 import React from 'react';
 import StarIcon from '@mui/icons-material/Star';
-import Link from 'next/link';
-import { Accommodation } from '@/store/Accommodation';
 import ImageCover from '../ImageCover';
+import { Accommodation } from '@/types';
 
 interface AccommodationCardProps {
   accommodation: Accommodation;
@@ -24,7 +23,9 @@ const AccommodationCard: React.FC<AccommodationCardProps> = ({
 
   return (
     <div
-      className="flex flex-col border rounded-md shadow-md hover:shadow-xl duration-300 p-4 bg-gray-50"
+      className={`flex flex-col border rounded-md shadow-md hover:shadow-xl duration-300 p-4 bg-gray-50 ${
+        onClick ? 'cursor-pointer' : ''
+      }`}
       onClick={handleClick}
       style={{ maxWidth: 500 }}
     >

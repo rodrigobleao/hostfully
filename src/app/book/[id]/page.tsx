@@ -13,9 +13,9 @@ import { useRouter } from 'next/navigation';
 import CustomModal from '@/components/Modal';
 import MenuComponent from '@/components/Menu';
 
-type BookProps = {
+interface BookProps {
   params: { id: string };
-};
+}
 
 export default function Book({ params }: BookProps) {
   const router = useRouter();
@@ -48,7 +48,6 @@ export default function Book({ params }: BookProps) {
 
       router.push('/my-reservations');
     }
-
     setIsModalOpen(false);
   };
 
@@ -95,7 +94,7 @@ export default function Book({ params }: BookProps) {
                   <div className="flex items-center gap-1">
                     <StarIcon sx={{ color: 'black', height: 18 }} />
                     <Typography variant="body2" className="text-lg">
-                      {(accommodation.rating / 10).toFixed(1)}
+                      {(rating / 10).toFixed(1)}
                     </Typography>
                   </div>
                   <div className="flex justify-end">
@@ -121,9 +120,8 @@ export default function Book({ params }: BookProps) {
                   className="w-full"
                   onClick={() => setIsModalOpen(true)}
                   disabled={!checkIn || !checkOut}
-                >
-                  Book
-                </CustomButton>
+                  label="Book"
+                />
               </div>
             </div>
           </div>
@@ -131,12 +129,15 @@ export default function Book({ params }: BookProps) {
         <CustomModal
           isOpen={isModalOpen}
           onClose={handleModalClose}
-          rightButtonLabel="Book"
-          onRightButtonAction={handleModalAction}
-          isRightActionDisabled={!checkIn || !checkOut}
+          buttons={[
+            {
+              label: 'Book',
+              onClick: handleModalAction,
+            },
+          ]}
         >
           {checkIn && checkOut ? (
-            <div className="p-4">
+            <div>
               <Typography variant="body1">
                 You&apos;re about to book the following dates:
               </Typography>

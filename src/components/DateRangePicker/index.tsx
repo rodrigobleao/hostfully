@@ -1,7 +1,7 @@
-import React, { useState } from 'react';
-import CustomDatePicker, { UnavailableDate } from '../DatePicker';
+import React from 'react';
+import CustomDatePicker from '../DatePicker';
 import { Dayjs } from 'dayjs';
-import { Booking } from '@/store/Booking';
+import { Booking } from '@/types';
 
 interface DateRangePickerProps {
   unavailableDates: Booking[];

@@ -1,13 +1,6 @@
+import { Accommodation } from '@/types';
 import { populateAccommodationsFromMock } from '@/utils/mock';
 import { create } from 'zustand';
-
-export interface Accommodation {
-  id: string;
-  title: string;
-  description: string;
-  price: number;
-  rating: number;
-}
 
 interface AccommodationStore {
   accommodations: Accommodation[];

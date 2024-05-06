@@ -3,27 +3,22 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import dayjs, { Dayjs } from 'dayjs';
-import { Booking } from '@/store/Booking';
+import { Booking } from '@/types';
 
-export type UnavailableDate = {
-  checkInDate: Dayjs;
-  checkOutDate: Dayjs;
-};
-
-const CustomDatePicker: React.FC<{
+interface CustomDatePickerProps {
   unavailableDates: Booking[];
   startDate?: Dayjs | undefined;
-  lastAvailableDate?: Dayjs | undefined;
   handleBookingOverlap?: boolean;
   value?: Dayjs | null;
   label?: string;
   onChange: (date: Dayjs) => void;
   disabled?: boolean;
   className?: string;
-}> = ({
+}
+
+const CustomDatePicker: React.FC<CustomDatePickerProps> = ({
   unavailableDates,
   startDate,
-  lastAvailableDate,
   handleBookingOverlap,
   value,
   label,
@@ -41,12 +36,9 @@ const CustomDatePicker: React.FC<{
     });
   };
 
-  const getMaxDate = (
-    startDate?: Dayjs,
-    lastAvailableDate?: Dayjs
-  ): Dayjs | undefined => {
+  const getMaxDate = (startDate?: Dayjs): Dayjs | undefined => {
     let currentDate = dayjs(startDate);
-    const maxPossibleDate = lastAvailableDate ?? currentDate.add(2, 'year');
+    const maxPossibleDate = currentDate.add(2, 'year');
 
     if (!startDate || !handleBookingOverlap) return maxPossibleDate;
 
@@ -71,7 +63,7 @@ const CustomDatePicker: React.FC<{
         disablePast
         disableHighlightToday
         minDate={startDate}
-        maxDate={getMaxDate(startDate, lastAvailableDate)}
+        maxDate={getMaxDate(startDate)}
         value={value || null}
         onChange={(date) => (date ? onChange(date) : null)}
         shouldDisableDate={(date) =>

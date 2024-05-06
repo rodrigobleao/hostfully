@@ -1,14 +1,14 @@
 'use client';
 
 import AccommodationCard from '@/components/AccommodationCard';
+import { CustomButtonProps } from '@/components/Button';
 import DateRangePicker from '@/components/DateRangePicker';
 import MenuComponent, { MenuOptions } from '@/components/Menu';
 import CustomModal from '@/components/Modal';
 import { useAccommodationStore, useBookingStore } from '@/store';
-import { Booking } from '@/store/Booking';
+import { Booking } from '@/types';
 import { Typography } from '@mui/material';
 import { Dayjs } from 'dayjs';
-import Link from 'next/link';
 import { useState } from 'react';
 
 function MyReservations() {
@@ -31,6 +31,7 @@ function MyReservations() {
     setIsModalOpen(false);
     setSelectedReservation(undefined);
     setUpdatedCheckInDate(undefined);
+    setUpdatedCheckOutDate(undefined);
     setCurrentStep(0);
   };
 
@@ -41,35 +42,49 @@ function MyReservations() {
 
   const handleRemoveBooking = (bookingId: Booking['id']) => {
     removeBooking(bookingId);
-    setIsModalOpen(false);
-    setCurrentStep(0);
+    handleModalClose();
   };
 
-  const handleUpdate = () => {
-    if (currentStep === 0) {
-      setCurrentStep(1);
-    } else {
-      selectedReservation &&
-        updateBooking({
-          bookingId: selectedReservation.id,
-          newDetails: {
-            checkInDate: updatedCheckInDate,
-            checkOutDate: updatedCheckOutDate,
-          },
-        });
-      setIsModalOpen(false);
-      setCurrentStep(0);
-    }
+  const handleUpdateAccommodationDate = () => {
+    selectedReservation &&
+      (currentStep === 0
+        ? setCurrentStep(1)
+        : (() => {
+            updateBooking({
+              bookingId: selectedReservation.id,
+              newDetails: {
+                checkInDate: updatedCheckInDate,
+                checkOutDate: updatedCheckOutDate,
+              },
+            });
+            handleModalClose();
+          })());
   };
 
-  const maxWidth =
-    userReservations.length >= 4 ? 'max-w-[1920px]' : 'max-w-[1720px]';
+  const modalButtons: CustomButtonProps[] = [
+    {
+      onClick: handleUpdateAccommodationDate,
+      label: 'Edit',
+      disabled:
+        currentStep !== 0 && (!updatedCheckInDate || !updatedCheckOutDate),
+    },
+  ];
+
+  if (currentStep === 0) {
+    modalButtons.unshift({
+      onClick: () =>
+        selectedReservation && handleRemoveBooking(selectedReservation.id),
+      label: 'Cancel reservation',
+      disabled: !selectedReservation,
+      styleVariant: 'danger',
+    });
+  }
 
   return (
     <main className="flex flex-col justify-center">
       <MenuComponent active={MenuOptions['/my-reservations']} />
       <div
-        className={`${maxWidth} mx-auto grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-24 gap-4 px-24`}
+        className={`'max-w-[1920px] mx-auto grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 px-24`}
       >
         {userReservations.map((reservation) => {
           const reservationAccommodation = getAccommodation(
@@ -89,31 +104,23 @@ function MyReservations() {
         <CustomModal
           isOpen={isModalOpen}
           onClose={handleModalClose}
-          rightButtonLabel="Edit"
-          isRightActionDisabled={!selectedReservation}
-          onRightButtonAction={handleUpdate}
-          leftButtonLabel="Cancel reservation"
-          leftButtonStyle="danger"
-          isLeftActionDisabled={!selectedReservation}
-          onLeftButtonAction={() =>
-            selectedReservation && handleRemoveBooking(selectedReservation.id)
-          }
+          buttons={modalButtons}
         >
-          {currentStep === 0 ? (
-            <div className="p-8">
+          {currentStep === 0 && selectedReservation ? (
+            <div>
               <Typography variant="body1">Your reservation details:</Typography>
               <Typography variant="body1" className="pt-3">
                 <strong>Check-in:</strong>
-                {selectedReservation?.checkInDate.format('MMMM D, YYYY')}
+                {selectedReservation.checkInDate.format('MMMM D, YYYY')}
               </Typography>
               <Typography variant="body1">
                 <strong>Check-out:</strong>
-                {selectedReservation?.checkOutDate.format('MMMM D, YYYY')}
+                {selectedReservation.checkOutDate.format('MMMM D, YYYY')}
               </Typography>
             </div>
           ) : (
             selectedReservation && (
-              <div className="p-6">
+              <div>
                 <DateRangePicker
                   unavailableDates={findBookings({
                     key: 'accommodationId',
@@ -123,7 +130,7 @@ function MyReservations() {
                     updatedCheckInDate || selectedReservation.checkInDate
                   }
                   checkOut={
-                    updatedCheckInDate
+                    updatedCheckOutDate
                       ? updatedCheckOutDate
                       : selectedReservation.checkOutDate
                   }

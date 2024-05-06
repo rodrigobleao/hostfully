@@ -2,30 +2,22 @@ import { populateBookingsFromMock } from '@/utils/mock';
 import dayjs, { Dayjs } from 'dayjs';
 import { create } from 'zustand';
 import { v4 as uuidv4 } from 'uuid';
+import { Booking } from '@/types';
 
-export interface Booking {
-  id: string;
-  userId: string;
-  accommodationId: string;
-  checkInDate: Dayjs;
-  checkOutDate: Dayjs;
-}
-
-interface StoragedBooking
-  extends Omit<Booking, 'checkInDate' | 'checkOutDate'> {
+interface BookingMock extends Omit<Booking, 'checkInDate' | 'checkOutDate'> {
   checkInDate: string;
   checkOutDate: string;
 }
 
-type FindBookingsArgs = {
+interface FindBookingsArgs {
   key: keyof Booking;
   value: string;
-};
+}
 
-export type UpdateBookingArgs = {
+interface UpdateBookingArgs {
   bookingId: string;
   newDetails: Partial<Booking>;
-};
+}
 
 const dayJsToString = (date: Dayjs): string => {
   return date.toString();
@@ -51,13 +43,11 @@ const bookingStore = create<BookingStore>((set, get) => {
     if (typeof window !== 'undefined') {
       const storedData = localStorage.getItem(localStorageKey);
       if (storedData) {
-        return JSON.parse(storedData).bookings.map(
-          (booking: StoragedBooking) => ({
-            ...booking,
-            checkInDate: stringToDayjs(booking.checkInDate),
-            checkOutDate: stringToDayjs(booking.checkOutDate),
-          })
-        );
+        return JSON.parse(storedData).bookings.map((booking: BookingMock) => ({
+          ...booking,
+          checkInDate: stringToDayjs(booking.checkInDate),
+          checkOutDate: stringToDayjs(booking.checkOutDate),
+        }));
       }
       return populateBookingsFromMock().map((booking) => ({
         ...booking,
